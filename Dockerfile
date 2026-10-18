@@ -13,7 +13,7 @@ WORKDIR /app
 
 # System deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+    curl=* \
     && rm -rf /var/lib/apt/lists/*
 
 # Python deps
@@ -26,7 +26,7 @@ COPY templates/ templates/
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -sf http://localhost:5000/ || exit 1
+    CMD ["curl", "-sf", "http://localhost:5000/"]
 
 EXPOSE 5000
 
