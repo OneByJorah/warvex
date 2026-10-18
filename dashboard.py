@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""EdgeGateway Dashboard — lightweight Flask dashboard for WARP gateway status."""
+"""warvex Dashboard — lightweight Flask dashboard for WARP gateway status."""
 import os, json, subprocess, time
 from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO
@@ -7,10 +7,36 @@ import threading
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins=[], async_mode="eventlet")
-PORT = int(os.environ.get("DASHBOARD_PORT", 5000))
+PORT = int(os.environ.get("DASHBOARD_PORT", 8080))
 AP_SUBNET = os.environ.get("AP_SUBNET", "192.168.50.0/24")
+DEMO_MODE = os.environ.get("DEMO_MODE", "false").lower() in ("1", "true", "yes")
+
+# Demo data for screenshots and local previews. Documentation-range IPs
+# (TEST-NET-3, RFC 5737) and locally administered MACs — never real hosts.
+DEMO_STATS = {
+    "warp": "Connected",
+    "warp_ip": "203.0.113.7",
+    "uptime": "2d 04:12 (demo data)",
+    "clients": 3,
+    "cpu": 23,
+    "mem_pct": 41,
+    "temp": 47,
+    "rx_kbps": 1840,
+    "tx_kbps": 612,
+    "rx_today": "1.4 GB",
+    "tx_today": "386 MB",
+    "note": "Demo data (DEMO_MODE=true)",
+}
+
+DEMO_LEASES = [
+    {"ip": "203.0.113.10", "mac": "02:00:00:00:00:01", "name": "demo-laptop", "expires": "0"},
+    {"ip": "203.0.113.11", "mac": "02:00:00:00:00:02", "name": "demo-phone", "expires": "0"},
+    {"ip": "203.0.113.12", "mac": "02:00:00:00:00:03", "name": "demo-tv", "expires": "0"},
+]
 
 def get_stats():
+    if DEMO_MODE:
+        return DEMO_STATS
     try:
         r = subprocess.run(["/usr/local/bin/gw-stats.sh"], capture_output=True, text=True, timeout=10)
         return json.loads(r.stdout)
@@ -32,6 +58,8 @@ def get_stats():
         }
 
 def get_leases():
+    if DEMO_MODE:
+        return DEMO_LEASES
     leases = []
     try:
         with open("/var/lib/misc/dnsmasq.leases") as f:
@@ -51,6 +79,10 @@ def restrict_subnet():
             return None
         if not client_ip.startswith(AP_SUBNET.rsplit(".", 1)[0] + "."):
             return jsonify({"error": "Forbidden: not on AP subnet"}), 403
+
+@app.route("/healthz")
+def healthz():
+    return jsonify({"status": "ok"})
 
 @app.route("/")
 def index():
@@ -103,7 +135,10 @@ def push_stats():
 def on_connect():
     pass
 
-if __name__ == "__main__":
+def main():
     t = threading.Thread(target=push_stats, daemon=True)
     t.start()
     socketio.run(app, host="0.0.0.0", port=PORT)
+
+if __name__ == "__main__":
+    main()

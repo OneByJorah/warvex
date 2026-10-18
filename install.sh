@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-echo "=== Installing WarpGate ==="
+echo "=== Installing warvex ==="
 
 if ! command -v docker &> /dev/null; then
     echo "Docker is required but not installed. Please install Docker first."
@@ -25,11 +25,11 @@ if [ ! -f .env ]; then
     fi
 fi
 
-echo "Building and starting WarpGate on port 5000..."
+echo "Building and starting warvex on port 8080..."
 if docker compose version &> /dev/null; then
     docker compose up --build -d
 else
     docker-compose up --build -d
 fi
 
-echo "WarpGate installed. Access: http://localhost:5000"
+echo "warvex installed. Access: http://127.0.0.1:8080"

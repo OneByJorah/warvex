@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Capture a screenshot of the WarpGate dashboard."""
+"""Capture a screenshot of the warvex dashboard."""
 import sys
 import time
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 repo = Path(__file__).resolve().parents[1]
-url = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:5000"
+url = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8080"
 out = repo / "docs" / "screenshots" / "dashboard.png"
 out.parent.mkdir(parents=True, exist_ok=True)
 

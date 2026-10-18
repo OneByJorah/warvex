@@ -18,6 +18,9 @@ dist/
 build/
 *.egg-info/
 *.so
+# Scratch (playwright videos, local venvs)
+tmp/
+.scratch/
 # Logs
 *.log
 

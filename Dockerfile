@@ -1,5 +1,5 @@
-# WarpGate — Docker-based deployment for dashboard only
-# Note: The full EdgeGateway (WiFi AP, WARP tunnel, iptables) requires
+# warvex — Docker-based deployment for dashboard only
+# Note: The full gateway (WiFi AP, WARP tunnel, iptables) requires
 # Raspberry Pi hardware and cannot be fully containerized.
 # This Dockerfile provides the dashboard component for remote monitoring.
 
@@ -26,10 +26,10 @@ COPY templates/ templates/
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD ["curl", "-sf", "http://localhost:5000/"]
+    CMD ["curl", "-sf", "http://localhost:8080/healthz"]
 
-EXPOSE 5000
+EXPOSE 8080
 
 USER 1000
 
-CMD ["gunicorn", "-k", "eventlet", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "dashboard:app"]
+CMD ["gunicorn", "-k", "eventlet", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120", "dashboard:app"]

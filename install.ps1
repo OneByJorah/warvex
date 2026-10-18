@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Windows installer for WarpGate via Docker Desktop.
+    Windows installer for warvex via Docker Desktop.
 #>
 param(
     [switch]$SkipStart
@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Installing WarpGate ===" -ForegroundColor Cyan
+Write-Host "=== Installing warvex ===" -ForegroundColor Cyan
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     Write-Error "Docker Desktop is required but not found. Install it from https://www.docker.com/products/docker-desktop/"
@@ -29,9 +29,9 @@ if (-not (Test-Path $envFile)) {
 $composeCmd = if (Get-Command "docker" -ErrorAction SilentlyContinue) { "docker compose" } else { "docker-compose" }
 
 if (-not $SkipStart) {
-    Write-Host "Building and starting WarpGate on port 5000..." -ForegroundColor Green
+    Write-Host "Building and starting warvex on port 8080..." -ForegroundColor Green
     Invoke-Expression "$composeCmd up --build -d"
-    Write-Host "WarpGate installed. Access: http://localhost:5000" -ForegroundColor Green
+    Write-Host "warvex installed. Access: http://127.0.0.1:8080" -ForegroundColor Green
 } else {
     Write-Host "Skipped start. Run '$composeCmd up --build -d' when ready." -ForegroundColor Yellow
 }
