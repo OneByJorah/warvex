@@ -16,8 +16,10 @@ const OUT = process.env.OUT_DIR || "docs/screenshots";
 const RECORD = process.env.RECORD === "1";
 
 // Edit this list per project: one entry per screen worth showing.
+// waitFor: CSS selector that exists only after real data rendered.
+// waitForText: page text to wait for (checked after waitFor).
 const PAGES = [
-  { name: "dashboard", path: "/", waitFor: "#app-ready" },
+  { name: "dashboard", path: "/", waitFor: "#leases-body", waitForText: "Up " },
 ];
 
 const FORBIDDEN = [
@@ -54,6 +56,13 @@ for (const p of PAGES) {
   const page = await context.newPage();
   await page.goto(new URL(p.path, BASE).toString(), { waitUntil: "networkidle" });
   if (p.waitFor) await page.waitForSelector(p.waitFor, { timeout: 15000 });
+  if (p.waitForText) {
+    await page.waitForFunction(
+      (t) => document.body.innerText.includes(t),
+      p.waitForText,
+      { timeout: 15000 },
+    );
+  }
 
   const text = (await page.evaluate(() => document.body.innerText)) + "\n" + (await page.title());
   const hits = FORBIDDEN.filter((f) => f.re.test(text)).map((f) => f.label);
@@ -65,7 +74,7 @@ for (const p of PAGES) {
   }
 
   const file = path.join(OUT, `${p.name}.png`);
-  await page.screenshot({ path: file, fullPage: true });
+  await page.screenshot({ path: file, fullPage: p.fullPage !== false });
   console.log(`saved ${file}`);
   await page.close();
 }
