@@ -30,4 +30,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 EXPOSE 5000
 
+USER 1000
+
 CMD ["gunicorn", "-k", "eventlet", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "dashboard:app"]
