@@ -4,8 +4,6 @@
 
 # WarpGate
 
-
-
 [![GitHub release](https://img.shields.io/github/v/release/OneByJorah/WarpGate?color=34d399&label=release&logo=github)](https://github.com/OneByJorah/WarpGate/releases)
 [![PyPI version](https://img.shields.io/pypi/v/warpgate?color=34d399&label=pip&logo=pypi)](https://pypi.org/project/warpgate/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
